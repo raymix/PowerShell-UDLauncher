@@ -1,0 +1,155 @@
+{
+    "Settings": {
+        "Allow CurrentUser Scope": false,
+        "Licensed": true,
+        "License Location": "license.lic"
+    },
+    "Dashboards": [
+        {
+            "Enabled":true,
+            "Name": "Example",
+            "Title": "Example Dashboard",
+            "Port":  "10000",
+            "Force": true,
+            "Admin mode": true,
+            "Theme":"Branded.ps1",
+            "Update Token":null,
+
+            "Pages folder":"Pages",
+            "Source folder":"Src",
+            "Published folders": [
+                {
+                    "Path":"Assets",
+                    "RequestPath":"assets"
+                },
+                {
+                    "Path": "Logos",
+                    "RequestPath": "logos"
+                }
+            ],
+
+            "Autoreload dasboard":  true,
+            "Autoreload Sources": [
+                {
+                    "Enabled": true,
+                    "Interval": ["5","Second"]
+                }
+            ],
+            "Autoreload Pages": [
+                {
+                    "Enabled": true,
+                    "Interval": ["5","Second"]
+                }
+            ],
+
+            "Footer":true,
+            "Footer Copyright":"My Company Ltd.",
+
+            "SQLite": true,
+            "SQLite Folder":"SQL",
+            "SQLite Filename":"Example.SQLite",
+
+            "Publish Windows Service": true,
+            "Set Service Automatic": true,
+
+            "Import PS Modules": ["myModule1","myModule2"],
+            
+            "Navigation": [
+                {
+                "Fixed": false,
+                "Width": null,
+                "Hide": true,
+                "Items": [
+                    {
+                        "Icon":"home",
+                        "Text":"Home",
+                        "URL or PageName":"Home",
+                        "Default page": true,
+                        "isEndpoint": true
+                    },
+                    {
+                        "Divider":true
+                    },
+                    {
+                        "Icon":"dashboard",
+                        "Text":"Sub 1",
+                        "Items":[
+                            {
+                                "Icon":"dashboard",
+                                "Text":"Sub 1 sub 1",
+                                "Items":[
+                                    {
+                                        "Icon":"dashboard",
+                                        "Text":"Sub 1 sub 1 sub 1",
+                                        "Items":[
+                                            {
+                                                "Icon":"dashboard",
+                                                "Text":"sub 1 sub 1 sub 1 page 1",
+                                                "URL or PageName":"s1s1s1_page1",
+                                                "isEndpoint": true
+                                            },
+                                            {
+                                                "Icon":"dashboard",
+                                                "Text":"sub 1 sub 1 sub 1 page 2",
+                                                "URL or PageName":"s1s1s1_page2",
+                                                "isEndpoint": false
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "Icon":"dashboard",
+                                        "Text":"Sub 1 sub 1 sub 2",
+                                        "Items":[
+                                            {
+                                                "Icon":"dashboard",
+                                                "Text":"sub 1 sub 1 sub 2 page 1",
+                                                "URL or PageName":"s1s1s2_page1",
+                                                "isEndpoint": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Icon":"dashboard",
+                        "Text":"Sub 2",
+                        "Items":[
+                            {
+                                "Icon":"dashboard",
+                                "Text":"sub 2 page 1",
+                                "URL or PageName":"s2_page1",
+                                "isEndpoint": true
+                            },
+                            {
+                                "Icon":"dashboard",
+                                "Text":"sub 2 page 2",
+                                "URL or PageName":"s2_page2",
+                                "isEndpoint": true
+                            }
+                        ]
+                    }
+                ]
+                }
+            ],
+            "Navigation Bar Links": [
+                {
+                    "Text": "UD Forums",
+                    "URL": "https://forums.universaldashboard.io/",
+                    "Icon": "home"
+                },
+                {
+                    "Text": "r/sysadmin",
+                    "URL": "https://www.reddit.com/r/sysadmin/",
+                    "Icon": "home"
+                },
+                {
+                    "Text": "r/PowerShell",
+                    "URL": "https://www.reddit.com/r/PowerShell/",
+                    "Icon": "home"
+                }
+            ]
+        }
+    ]
+}

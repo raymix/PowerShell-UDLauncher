@@ -1,0 +1,2 @@
+### Globally defined variables are called from here and will be imported into all launched dashboards. (i.e. server names)
+$ExampleVariable = "This is an example global variable that will be imported in all projects"
