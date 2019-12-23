@@ -2,21 +2,21 @@
 Generates a Universal Dashboard scaffolded project based on a JSON file 
 
 # What is this?
-UDLauncher uses JSON file to configure your dashboard(s), it will create all necesarry files and folders to create a baseline skeleton for your dashboard project, think of it a boilerplate template for PowerShell Universal Dashboards. There is no limit to amount of dashboard projects you can generate from a single config file.
+UDLauncher uses JSON file to configure your dashboard(s), it will create all necesarry files and folders to create a baseline skeleton for your dashboard project, think of it as a boilerplate template (?) for PowerShell Universal Dashboards. There is no limit to amount of dashboard projects you can generate from a single config file.
 
 # Why?
-When I realised that Universal Dashboards can be used to create any type of web pages, not just dashboards, I quickly got my company to purchase a license so I can play around with it. The problem from the very begininng was that I did not know where to even begin. I was not able to experiment much until after I've read couple of key pages in official documentation. But where do I go from there? What's the best way to set up development environment? What if I need to dramatically change subheader and page structure, do I risk messing something up?
+When I realised that Universal Dashboards can be used to create any type of web pages, not just dashboards, I quickly got my company to purchase a license so I can play around with it. The problem from the very begining was that I did not know where to even begin. I was not able to experiment much until after I've read couple of key pages in official documentation. But where do I go from there? What's the best way to set up development environment? What if I need to dramatically change subheader and page structure, do I risk messing something up?
 
-Then I found  [UDTemplate](https://github.com/ArtisanByteCrafter/ud-template "UDTemplate") project by [ArtisanByteCrafter](https://github.com/ArtisanByteCrafter "ArtisanByteCrafter"). This module generates a basic skeleton project with a JSON file for configuration. I thought JSON config file was a great idea, so that's what my project is based off. However, instead of generating a JSON file using commands, a JSON file is used to generate the project(s) and dashboard(s).
+Then I found  [UDTemplate](https://github.com/ArtisanByteCrafter/ud-template "UDTemplate") project by [ArtisanByteCrafter](https://github.com/ArtisanByteCrafter "ArtisanByteCrafter"). This module generates a basic skeleton project with a JSON file for configuration. I thought JSON config file was a great idea, so that's what my project is based off. However, instead of generating a JSON file using commands, a JSON file is used to generate the dashboard(s).
 
 # Features
-- ** Autoreload modified pages** - Script runs an endpoint that will detect changes in page files and update them live (currently requires user to reload browser page, though)
+- **Autoreload modified pages** - Script runs an endpoint that will detect changes in page files and update them live (currently requires user to reload browser page, though). Duo to nature of UD, autoreloading pages might require to be configured with `isEndpoint = true`(probably won't work if page is set as Content instead)
 - **Autoreload modified functions** - Script runs an endpoint that will detect changes in functions files in your sources folder and update them live.
-- **Fully JSON based sidenavigation design **- add subheaders or dividers to nicely categorize your pages, there should be no limit on how deep you can go with subheaders.
+- **Fully JSON based sidenavigation design**- add subheaders or dividers to nicely categorize your pages, there should be no limit on how deep you can go with subheaders.
 - Project can be configured to run in CurrentUser scope
 - Ability to disable any dashboard (not launch them) without deleting or modifying project files (e.g. historical reasons)
-- Enable Admin mode individually for each dashboard
-- Creates Pages folder and generates .PS1 files for each configured page with a baseline code in them
+- Enable or Disable Admin mode individually for each dashboard
+- Creates Pages folder and generates .PS1 files for each configured page with a template code in them
 - Creates Sources folder,  generates an example .PS1 function file that you can call from within running project
 - Creates Published folders (used for images, logos, downloads, assets etc)
 - If license enabled, allows modifying Footer copyright message
@@ -35,27 +35,35 @@ Then I found  [UDTemplate](https://github.com/ArtisanByteCrafter/ud-template "UD
 
 # Example screenshots
 **Before running launcher, clean slate:**
+
 ![](https://i.imgur.com/ZPNtHWQ.png)
 
 **Example page configuration:**
+
 ![](https://i.imgur.com/c08sV0E.png)
 
 **Console output after configuring "example" project in JSON and running launcher:**
+
 ![](https://i.imgur.com/gK4yhA1.png)
 
 **Scaffolded project for "example" dashboard:**
+
 ![](https://i.imgur.com/J88HQsK.png)
 
 **Autogenerated project files and folders (naming scheme is based off JSON):**
+
 ![](https://i.imgur.com/HsBdiDv.png)
 
 **Example pages that were generated:**
+
 ![](https://i.imgur.com/Pvlv3fl.png)
 
 **Example branded dashboard that was generated using "example" config:**
+
 ![](https://i.imgur.com/Cfvi2jJ.png)
 
 **Example side navigation bar for branded dashboard:**
+
 ![](https://i.imgur.com/k4Yl4w5.png)
 
 # JSON Documentation
