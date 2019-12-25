@@ -9,6 +9,9 @@ When I realised that Universal Dashboards can be used to create any type of web 
 
 Then I found  [UDTemplate](https://github.com/ArtisanByteCrafter/ud-template "UDTemplate") project by [ArtisanByteCrafter](https://github.com/ArtisanByteCrafter "ArtisanByteCrafter"). This module generates a basic skeleton project with a JSON file for configuration. I thought JSON config file was a great idea, so that's what my project is based off. However, instead of generating a JSON file using commands, a JSON file is used to generate the dashboard(s).
 
+# How does it work?
+Simply edit the config.json file to set up your dashboard(s) and run Launch.ps1
+
 # Features
 - **Autoreload modified pages** - Script runs an endpoint that will detect changes in page files and update them live (currently requires user to reload browser page, though). Duo to nature of UD, autoreloading pages might require to be configured with `isEndpoint = true`(probably won't work if page is set as Content instead)
 - **Autoreload modified functions** - Script runs an endpoint that will detect changes in functions files in your sources folder and update them live.
