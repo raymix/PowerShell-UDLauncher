@@ -4,7 +4,7 @@ $GlobalVariablesFile = (Join-Path $scriptRoot "GlobalVariables.ps1")
 $GlobalFunctionsFile = (Join-Path $scriptRoot "GlobalFunctions.ps1")
 $GlobalEndpointsFile = (Join-Path $scriptRoot "GlobalEndpoints.ps1")
 
-if ($null -eq (Get-Module -Name UniversalDashboard -ListAvailable)) {
+if ($null -eq (Get-Module -Name UniversalDashboard* -ListAvailable)) {
     Write-Host "Universal Dashboard module not found, installing" -ForegroundColor Yellow
 
     try {
@@ -271,8 +271,13 @@ foreach ($dashboard in $cfg.Dashboards) {
             $StartDBParams.Add("Force", $true) 
         }
 
-        if ($dashboard.'Admin mode' ) {
-            $StartDBParams.Add("AdminMode", $true) 
+        if ($dashboard.'Admin mode') {
+            if ($cfg.Settings.Licensed) {
+                $StartDBParams.Add("AdminMode", $true) 
+            } else {
+                Write-Host "WARNING: Admin mode does not work with Community edition" -ForegroundColor Yellow
+            }
+            
         }
 
         if ($dashboard.'Autoreload dashboard' ) {
