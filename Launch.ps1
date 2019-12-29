@@ -1,3 +1,7 @@
+param (
+    [Parameter(Mandatory=$false)][switch]$Wait
+)
+
 $scriptRoot = if ($PSScriptRoot) {$PSScriptRoot} else {".\"}
 $cfg = Get-Content (Join-Path $scriptRoot config.json) | ConvertFrom-Json
 $GlobalVariablesFile = (Join-Path $scriptRoot "GlobalVariables.ps1")
@@ -108,13 +112,16 @@ foreach ($dashboard in $cfg.Dashboards) {
         }
 
         if ($dashboard.SQLite) {
+            
+            $SQLiteDBLocation = ""
+            $SQLiteDatasource = ""
 
-            $SQLiteDBLocation = Join-Path $ProjectRoot $dashboard.'SQLite Folder'
-
-            $SQLiteDatasource = if ($dashboard.'SQLite Folder' -notmatch "^\\\\|^\w:\\") {
-                Join-Path $SQLiteDBLocation ($dashboard.'SQLite Filename')
+            if ($dashboard.'SQLite Folder' -notmatch "^\\\\|^\w:\\") {
+                $SQLiteDBLocation = Join-Path $ProjectRoot $dashboard.'SQLite Folder'
+                $SQLiteDatasource = Join-Path $SQLiteDBLocation ($dashboard.'SQLite Filename')
             } else {
-                Join-Path ($dashboard.'SQLite Folder') ($dashboard.'SQLite Filename')
+                $SQLiteDBLocation = $dashboard.'SQLite Folder'
+                $SQLiteDatasource = Join-Path ($dashboard.'SQLite Folder') ($dashboard.'SQLite Filename')
             }
             
             ### reuse below to install modules from config instead, then import them
@@ -138,10 +145,12 @@ foreach ($dashboard in $cfg.Dashboards) {
             if (!(Test-Path $SQLiteDBLocation)) {
                 New-item $SQLiteDBLocation -ItemType Directory -Force | Out-Null
             }
+
             if (!(Test-Path $SQLiteDatasource)) {
                 Import-Module PSSQLite -Force
                 Invoke-SqliteQuery -DataSource $SQLiteDatasource -Query "create table a(f1 int); drop table a;"
             }
+
             $ProjectModules += "PSSQLite"
             $ProjectVariables += "SQLiteDatasource"
         }
@@ -286,6 +295,10 @@ foreach ($dashboard in $cfg.Dashboards) {
 
         if ($dashboard.'Update Token') {
             $StartDBParams.Add("UpdateToken ", $dashboard.'Update Token')
+        }
+
+        if ($Wait) {
+            $StartDBParams.Add("Wait", $true)
         }
 
         Start-UDDashboard -Dashboard (New-UDDashboard @NewDBParams) @StartDBParams
