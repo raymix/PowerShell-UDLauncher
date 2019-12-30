@@ -51,6 +51,29 @@
 
             "Import PS Modules": ["myModule1","myModule2"],
             
+            "Security": [
+                {
+                    "Enabled": false,
+                    "Allow HTTP": false,
+                    "Title": "Login",
+                    "Logo": [
+                        {
+                            "Change": false,
+                            "URL": "./publishedFolder/logo.svg",
+                            "Height": 256,
+                            "Width": 256
+                        }
+                    ],
+                    "WelcomeText": null,
+                    "LoadingText": null,
+                    "LoginFormFontColor": "#FFFFFF",
+                    "LoginFormBackgroundColor": "#153720",
+                    "PageBackgroundColor": "#215732",
+                    "LoginButtonFontColor": "#FFFFFF",
+                    "LoginButtonBackgroundColor": "#215732"
+                }
+            ],
+
             "Navigation": [
                 {
                 "Fixed": false,

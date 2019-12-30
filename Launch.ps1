@@ -92,6 +92,8 @@ foreach ($dashboard in $cfg.Dashboards) {
         $AutoReloadSources = $dashboard.'Autoreload Sources'
         $AutoReloadPages = $dashboard.'Autoreload Pages'
 
+        $LoginPage = ""
+
         if (!(Test-Path $ProjectRoot)) {
             New-Item $ProjectRoot -ItemType Directory | Out-Null
         }
@@ -248,6 +250,64 @@ foreach ($dashboard in $cfg.Dashboards) {
             $Cache:ProjectSourcesHash.Add($src.BaseName,(Get-FileHash -LiteralPath $src.FullName -Algorithm MD5).Hash)
         }
 
+        if ($Dashboard.Security.Enabled) {
+            $AuthenticationMethodFile = Join-Path $ProjectRoot "AuthenticationMethod.ps1"
+            $AuthorizationPolicyFile = Join-Path $ProjectRoot "AuthorizationPolicy.ps1"
+
+            if (!(Test-Path $AuthenticationMethodFile)) {
+                New-Item $AuthenticationMethodFile -ItemType File | Out-Null
+                'New-UDAuthenticationMethod -Endpoint {New-UDAuthenticationResult -UserName "Demo" -Success}' | Out-File $AuthenticationMethodFile
+            }
+
+            if (!(Test-Path $AuthorizationPolicyFile)) {
+                New-Item $AuthorizationPolicyFile -ItemType File | Out-Null
+                'New-UDAuthorizationPolicy -Name "Demo Policy" -Endpoint { $true }' | Out-File $AuthorizationPolicyFile
+            }
+
+            $loginPageParams = @{
+                AuthenticationMethod    = (. $AuthenticationMethodFile)
+                AuthorizationPolicy     = (. $AuthorizationPolicyFile)
+            }
+            
+            if ($dashboard.Security.Title) {
+                $loginPageParams.Add("Title", $dashboard.Security.Title) 
+            }
+
+            if ($dashboard.Security.Logo.Change) {
+                $loginPageParams.Add("Logo", (New-UDImage -Url $dashboard.Security.Logo.URL -Height $dashboard.Security.Logo.Height -Width $dashboard.Security.Logo.Width )) 
+            }
+
+            if ($dashboard.Security.WelcomeText) {
+                $loginPageParams.Add("WelcomeText", $dashboard.Security.WelcomeText) 
+            }
+
+            if ($dashboard.Security.LoadingText) {
+                $loginPageParams.Add("LoadingText", $dashboard.Security.LoadingText) 
+            }
+
+            if ($dashboard.Security.LoginFormFontColor) {
+                $loginPageParams.Add("LoginFormFontColor", $dashboard.Security.LoginFormFontColor) 
+            }
+
+            if ($dashboard.Security.LoginFormBackgroundColor) {
+                $loginPageParams.Add("LoginFormBackgroundColor", $dashboard.Security.LoginFormBackgroundColor) 
+            }
+
+            if ($dashboard.Security.PageBackgroundColor) {
+                $loginPageParams.Add("PageBackgroundColor", $dashboard.Security.PageBackgroundColor) 
+            }
+
+            if ($dashboard.Security.LoginButtonFontColor) {
+                $loginPageParams.Add("LoginButtonFontColor", $dashboard.Security.LoginButtonFontColor) 
+            }
+
+            if ($dashboard.Security.LoginButtonBackgroundColor) {
+                $loginPageParams.Add("LoginButtonBackgroundColor", $dashboard.Security.LoginButtonBackgroundColor) 
+            }
+
+            $LoginPage = New-UDLoginPage @loginPageParams
+        }
+
         $ProjectVariables   += @("ProjectRoot","ProjectFooterFile","ProjectPages","ProjectPagesLocation","ProjectSourceLocation","ProjectSourceFiles","AutoReloadSources","AutoReloadPages","Cache:ProjectSourcesHash","Cache:ProjectPagesHash")
         $ProjectFunctions   += @()
         $ProjectModules     += $dashboard.'Import PS Modules'
@@ -263,6 +323,10 @@ foreach ($dashboard in $cfg.Dashboards) {
 
         if ($cfg.Settings.Licensed) {
             $NewDBParams.Add("Footer", (. $ProjectFooterFile)) 
+        }
+
+        if ($Dashboard.Security.Enabled) {
+            $NewDBParams.Add("LoginPage", $LoginPage)
         }
 
         $ProjectPublishedFolders = ($dashboard.'Published folders') | ForEach-Object {
@@ -295,6 +359,10 @@ foreach ($dashboard in $cfg.Dashboards) {
 
         if ($dashboard.'Update Token') {
             $StartDBParams.Add("UpdateToken ", $dashboard.'Update Token')
+        }
+
+        if ($Dashboard.Security.Enabled) {
+            $StartDBParams.Add("AllowHttpForLogin", $Dashboard.Security.'Allow HTTP')
         }
 
         if ($Wait) {
