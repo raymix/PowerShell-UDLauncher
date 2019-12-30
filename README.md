@@ -10,7 +10,7 @@ When I realised that Universal Dashboards can be used to create any type of web 
 Then I found  [UDTemplate](https://github.com/ArtisanByteCrafter/ud-template "UDTemplate") project by [ArtisanByteCrafter](https://github.com/ArtisanByteCrafter "ArtisanByteCrafter"). This module generates a basic skeleton project with a JSON file for configuration. I thought JSON config file was a great idea, so that's what my project is based off. However, instead of generating a JSON file using commands, a JSON file is used to generate the dashboard(s).
 
 # How does it work?
-Simply edit the config.json file to set up your dashboard(s) and run Launch.ps1
+Edit the config.json file to set up your dashboard(s) and run Launch.ps1
 
 # Features
 - **Autoreload modified pages** - Script runs an endpoint that will detect changes in page files and update them live (currently requires user to reload browser page, though). Duo to nature of UD, autoreloading pages might require to be configured with `isEndpoint = true`(probably won't work if page is set as Content instead)
@@ -31,10 +31,29 @@ Simply edit the config.json file to set up your dashboard(s) and run Launch.ps1
 
 # Issues
 - Invoke-UDRedirect cannot be used to reload page where changes were detected, need a workaround. Suggestions?
-- Publish Windows service is on my TODO list
 - No Authentication - I haven't got that far yet and I am not sure if I will ever integrate it for public version since I plan to use ADFS authentication internally. Too many options.
 - No Authorization - same problem as above
-- Not tested with IIS, but it should work in theory
+
+# Publishing
+Unfortunately, due to limitations how UD works (by exporting IIS Core files), UDLauncher does not work with IIS or Publish-UDDashboard. Those two also require dashboard.ps1 file for each dashboard you are publishing, which are run separately, and that is not mentality of UDLauncher project. Idea behind UDLauncher is rapid development, json based configuration and single command to deploy all dashboards at once.
+
+UDLauncher is published and run on the server in same fashion it is run in local development environment. Publishing is done with remote disconnected PowerShell session. Production environment literary mirrors your local development environment.
+
+Similar to IIS method with application pools, UDLauncher is published in production by running Launch.ps1 file, but directly from powershell in a user context specified by you (same as local development).
+
+To achieve this, one method is to run a persistent (disconnected) remote session in user context on your server:
+```
+Invoke-Command -ComputerName SERVER -Credential $cred -ScriptBlock { C:\UniversalDashboard\Launch.ps1 } -InDisconnectedSession -SessionName UniversalDashboard
+```
+To stop running dashboard(s) or cleanup any existing or stale sessions (hint: remove Where-Object pipe to clean up all WSMan sessions):
+```
+Get-WSManInstance -ComputerName SERVER -Credential $cred -ResourceURI Shell -Enumerate | Where-Object {$_.name -eq "UniversalDashboard"} | Select ShellId | ForEach-Object {Remove-WSManInstance -ComputerName SERVER -Credential $cred -ResourceURI Shell -SelectorSet @{ShellID=$_.ShellId} }
+```
+
+The downside to this method vs IIS/Service methods is that when server is rebooted, you'll need some means of detecting that and restart UDLauncher (e.g. startup script, Windows Scheduler, some monitoring system, scheduled CI pipeline, etc).
+
+# CI/CD
+I am using above with Gitlab CI pipelines and it works great, apart from aformentioned issue. Every time I push/merge my changes to master, CI pipeline takes care of updating dashboard files server side and then restarts the server in context of a local user on the server (not a local admin or even domain user for security purposes).
 
 # Example screenshots
 **Before running launcher, clean slate:**
@@ -175,13 +194,6 @@ This is a configuration part for footer branding
 `SQLite Folder` Folder where SQLite database resides (or will be crated). Can be local path (C:\SQL\) or UNC (\\fileserver\SQL\). If you simply define a name, e.g. SQLFolder, the script will instead look into your dashboard's root instead (i.e. Projectroot\DashboardRoot\SQLFolder)
 
 `SQLite Filename` Name of your SQL datasource (e.g. mydatabase.sqlite)
-
-                "Publish Windows Service": true,
-                "Set Service Automatic": true,
-
-`Publish Windows Service` - should the script publish your dashboard as a service? (Not implemented and tested yet)
-
-`Set Service Automatic` sets the published service as "Automatic" so it automatically loads if you reboot your server. Sets to "Manual" if false
 
                 "Import PS Modules": ["myModule1","myModule2"],
 
