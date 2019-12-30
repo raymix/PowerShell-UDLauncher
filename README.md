@@ -35,25 +35,17 @@ Edit the config.json file to set up your dashboard(s) and run Launch.ps1
 - No Authorization - same problem as above
 
 # Publishing
-Unfortunately, due to limitations how UD works (by exporting IIS Core files), UDLauncher does not work with IIS or Publish-UDDashboard. Those two also require dashboard.ps1 file for each dashboard you are publishing, which are run separately, and that is not mentality of UDLauncher project. Idea behind UDLauncher is rapid development, json based configuration and single command to deploy all dashboards at once.
+(not tested) If you're using Publish-UDDashboard specify target directory initially to export ASP core files, you will need to rename Launcher.ps1 to Dashboard.ps1. You'll need to copy rest of the files and folders over to the target directory manually. See administrative event log if service is not starting
 
-UDLauncher is published and run on the server in same fashion it is run in local development environment. Publishing is done with remote disconnected PowerShell session. Production environment literary mirrors your local development environment.
+(not tested) If you're using IIS, same rules apply - rename Launch.ps1 to Dashboard.ps1 and copy over rest of the files and directories
 
-Similar to IIS method with application pools, UDLauncher is published in production by running Launch.ps1 file, but directly from powershell in a user context specified by you (same as local development).
+You can also set up NSSM to run dashboard as a service:
+Download and unzip binary .exe file from https://nssm.cc/download and save it on your server.
+Log on as admin and run below command to create service (adjust paths accordingly):
 
-To achieve this, one method is to run a persistent (disconnected) remote session in user context on your server:
 ```
-Invoke-Command -ComputerName SERVER -Credential $cred -ScriptBlock { C:\UniversalDashboard\Launch.ps1 } -InDisconnectedSession -SessionName UniversalDashboard
+& C:\NSSM\nssm.exe install "UDLauncher" "C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe" '-ExecutionPolicy Bypass -NoProfile -File "C:/UniversalDashboard/Launch.ps1" -Wait'
 ```
-To stop running dashboard(s) or cleanup any existing or stale sessions (hint: remove Where-Object pipe to clean up all WSMan sessions):
-```
-Get-WSManInstance -ComputerName SERVER -Credential $cred -ResourceURI Shell -Enumerate | Where-Object {$_.name -eq "UniversalDashboard"} | Select ShellId | ForEach-Object {Remove-WSManInstance -ComputerName SERVER -Credential $cred -ResourceURI Shell -SelectorSet @{ShellID=$_.ShellId} }
-```
-
-The downside to this method vs IIS/Service methods is that when server is rebooted, you'll need some means of detecting that and restart UDLauncher (e.g. startup script, Windows Scheduler, some monitoring system, scheduled CI pipeline, etc).
-
-# CI/CD
-I am using above with Gitlab CI pipelines and it works great, apart from aformentioned issue. Every time I push/merge my changes to master, CI pipeline takes care of updating dashboard files server side and then restarts the server in context of a local user on the server (not a local admin or even domain user for security purposes).
 
 # Example screenshots
 **Before running launcher, clean slate:**
