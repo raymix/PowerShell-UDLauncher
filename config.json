@@ -49,9 +49,6 @@
             "SQLite Folder":"SQL",
             "SQLite Filename":"Example.SQLite",
 
-            "Publish Windows Service": true,
-            "Set Service Automatic": true,
-
             "Import PS Modules": ["myModule1","myModule2"],
             
             "Navigation": [
