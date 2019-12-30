@@ -25,14 +25,13 @@ Edit the config.json file to set up your dashboard(s) and run Launch.ps1
 - If license enabled, allows modifying Footer copyright message
 - If enabled, imports PSSQLite module. If local or UNC location for database not set, it will create SQL folder within project and generate a blank SQLite database if .SQLite file not found
 - Allows importing all your favorite PowerShell modules from within config
+- Allows enabling Login page and generate templates for Authentication methods and Authorization policies
 - Add navigation bar links (top right corner of your dashboard, e.g. links to external websites)
 - Supports built-in or custom themes, branded example template included. If using custom theme, put your file in Themes folder and update JSON with filename.ps1. To use built-in themes, just add their name (or use "Default") in JSON entry
 - Included .gitignore file excludes .SQLite files, handy if you intend to use GIT
 
 # Issues
 - Invoke-UDRedirect cannot be used to reload page where changes were detected, need a workaround. Suggestions?
-- No Authentication - I haven't got that far yet and I am not sure if I will ever integrate it for public version since I plan to use ADFS authentication internally. Too many options.
-- No Authorization - same problem as above
 
 # Publishing
 (not tested) If you're using Publish-UDDashboard specify target directory initially to export ASP core files, you will need to rename Launcher.ps1 to Dashboard.ps1. You'll need to copy rest of the files and folders over to the target directory manually. See administrative event log if service is not starting
